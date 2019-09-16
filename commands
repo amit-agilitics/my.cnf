@@ -131,3 +131,8 @@ Create Table: CREATE TABLE `employees` (
        `jobTitle` varchar(50) NOT NULL,
        PRIMARY KEY (`employeeNumber`)
      ) 
+
+ALTER TABLE employees
+                         ADD fullName varchar(100)
+                      GENERATED ALWAYS AS (CONCAT(firstName," ",lastName))
+                      VIRTUAL AFTER employeeNumber;
