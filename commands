@@ -117,3 +117,17 @@ so calculate the desired size of innodb_buffer_pool_size .
 
 So innodb_buffer_pool_size should be set to 2147483648. Set this globally on the server and
 then confirm the change
+
+Create Table: CREATE TABLE `employees` (
+       `employeeNumber` int(11) NOT NULL,
+       `fullName` varchar(100) GENERATED ALWAYS AS (concat(`firstName`,' ',`lastName`)
+     ) VIRTUAL,
+       `lastName` varchar(50) NOT NULL,
+       `firstName` varchar(50) NOT NULL,
+       `extension` varchar(10) NOT NULL,
+       `email` varchar(100) NOT NULL,
+       `officeCode` varchar(10) NOT NULL,
+       `reportsTo` int(11) DEFAULT NULL,
+       `jobTitle` varchar(50) NOT NULL,
+       PRIMARY KEY (`employeeNumber`)
+     ) 
