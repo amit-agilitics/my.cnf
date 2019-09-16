@@ -1,0 +1,28 @@
+SHOW GLOBAL VARIABLES LIKE '%_table_size';
+
+ALTER TABLE employees
+                         ADD fullName varchar(100)
+                      GENERATED ALWAYS AS (CONCAT(firstName," ",lastName))
+                      VIRTUAL AFTER employeeNumber;
+                      
+                      
+ mysql sales < /root/mariadb-training/sample_databases/sales/sales_employees.sql
+ 
+ CREATE USER 'me'@'%' identified by 'mariadb';
+ CREATE USER 'backupuser'@localhost IDENTIFIED BY 'mariadb';
+ 
+ GRANT SELECT, RELOAD, LOCK TABLES, SUPER, REPLICATION CLIENT, S
+     HOW VIEW, EVENT, TRIGGER ON *.* TO 'backupuser'@'localhost';
+     
+     CREATE ROLE dba;
+     CREATE ROLE developer;
+     
+     GRANT SUPER, SHUTDOWN ON *.* to 'dba';
+     GRANT SELECT ON *.* to 'developer';
+
+
+GRANT dba to 'me'@'%';
+GRANT developer to 'me'@'%';
+
+INSTALL SONAME 'simple_password_check';
+ 
