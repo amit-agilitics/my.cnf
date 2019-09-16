@@ -1,3 +1,33 @@
+free -h
+
+innodb_buffer_pool_size=256M
+skip_name_resolve=1
+datadir=/custom-path/mariadb/
+expire_logs_days=10
+log_bin
+binlog_format=MIXED
+server_audit_events=CONNECT
+server_audit_excl_users=backup_user
+simple_password_check_minimal_length=8
+simple_password_check_digits=2
+cracklib_password_check=1
+plugin-load-add=ha_rocksdb.so
+
+
+INSTALL SONAME 'cracklib_password_check';
+CREATE USER 'backup_user'@'localhost' IDENTIFIED BY 'secretpass';
+CREATE ROLE backup_role;
+GRANT RELOAD, LOCK TABLES, REPLICATION CLIENT ON *.* TO backup_role;
+GRANT backup_role TO backup_user;
+SET DEFAULT ROLE backup_role TO backup_user;
+ CREATE USER 'simple_pass'@'localhost' IDENTIFIED BY 'mariadb';
+
+ INSTALL PLUGIN server_audit SONAME 'server_audit';
+ INSTALL SONAME 'simple_password_check';
+
+yum install MariaDB-rocksdb-engine
+
+systemctl restart mariadb
 SHOW GLOBAL VARIABLES LIKE '%_table_size';
 
 ALTER TABLE employees
@@ -25,4 +55,25 @@ GRANT dba to 'me'@'%';
 GRANT developer to 'me'@'%';
 
 INSTALL SONAME 'simple_password_check';
+
+mysqldump --master-data=2 --all-databases --single-transaction > /root/dump.sql
+mysql < /root/dump.sql
+
+MariaDB [(none)]> SOURCE /root/dump.sql;
  
+ 
+ mariabackup --backup --no-lock --target-dir /root/backups --user backupuser --password mariadb --port 3306 --socket /var/lib/mysql/mysql.sock
+
+mariabackup --prepare --target-dir /root/backups
+
+mariabackup --copy-back --target-dir /root/backups/ --datadir /var/lib/mysql/
+mysqlslap -a -i 10 -e InnoDB,MyISAM
+
+mysqlslap --delimiter=";" --create-schema=slappy --create="CREATE TABLE t (a
+int);INSERT INTO t VALUES (5)" --query="SELECT * FROM t" --concurrency=100
+--iterations=150 > /tmp/load_test.txt
+
+
+ select *  from birds into outfile '/tmp/birds.txt';
+ 
+ load data infile '/tmp/birds.txt' into table birds;
