@@ -54,7 +54,19 @@ tmp_table_size=64M
 max_heap_table_size=64M
 max_connections=50
 log_warnings=4
+server_audit_logging=ON
+server_audit_events=connect,table
+server_audit_excl_users=backupuser
 
+simple_password_check_digits=1
+simple_password_check_letters_same_case=1
+simple_password_check_minimal_length=8
+simple_password_check_other_characters=1
 
+     [mariadb]
+    log_bin= /var/log/mariadb/master1-bin
+    log_bin_index = /var/log/mariadb/master1-bin.index
+    binlog_format=ROW
+    expire_logs_days=1
 
 
