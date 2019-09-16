@@ -53,7 +53,7 @@ innodb_buffer_pool_size=2147483648
 tmp_table_size=64M
 max_heap_table_size=64M
 max_connections=50
-
+log_warnings=4
 
 
 
