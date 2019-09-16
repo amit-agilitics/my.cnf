@@ -82,3 +82,38 @@ int);INSERT INTO t VALUES (5)" --query="SELECT * FROM t" --concurrency=100
  select *  from birds into outfile '/tmp/birds.txt';
  
  load data infile '/tmp/birds.txt' into table birds;
+
+
+
+
+To determine 70% of the total memory in bytes multiply the total memory (3705458688) by 70% (70%/100%=0.70).
+3705458688 * 0.70 = 2593821082 bytes
+Next, identify the values of innodb_buffer_pool_chunk_size and
+innodb_buffer_pool_instances to use in the calculation.
+ MariaDB [(none)]> show variables like 'innodb_buffer%';
+ +-------------------------------------+----------------+
+ | Variable_name                       | Value          |
+ +-------------------------------------+----------------+
+ | innodb_buffer_pool_chunk_size       | 134217728      |
+ | innodb_buffer_pool_dump_at_shutdown | ON             |
+      | innodb_buffer_pool_dump_now
+ | innodb_buffer_pool_dump_pct
+ | innodb_buffer_pool_filename
+ | innodb_buffer_pool_instances
+ | innodb_buffer_pool_load_abort
+ | innodb_buffer_pool_load_at_startup  | ON             |
+ | innodb_buffer_pool_load_now         | OFF            |
+ | innodb_buffer_pool_size             | 134217728      |
+ +-------------------------------------+----------------+
+innodb_buffer_pool_chunk_size is set to the default of 134217728, and innodb_buffer_pool_instances is set to the default of 1.
+Now divide the desired size (2593821082) by innodb_buffer_pool_chunk_size (134217728) multiplied by innodb_buffer_pool_instances (1).
+ 2593821082 / (134217728 * 1) = 19.32547302544117
+ 
+The nearest whole number of 19.32547302544117 is 19. So multiply the nearest whole number (19) by innodb_buffer_pool_chunk_size (134217728) times innodb_buffer_pool_instances (1)
+so calculate the desired size of innodb_buffer_pool_size .
+
+| OFF | |25 | | ib_buffer_pool | |1 | | OFF |
+ (134217728 * 1) * 19 = 2550136832 bytes
+
+So innodb_buffer_pool_size should be set to 2147483648. Set this globally on the server and
+then confirm the change
